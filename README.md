@@ -68,6 +68,7 @@ public class Main
 
 ### Test image:
 
+<img src="/testImage/1.jpg" alt="Image used for test" width="400"/>
 
 ### Returned result:
 ```java
