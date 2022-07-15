@@ -59,12 +59,13 @@ public class Main
     public static void main(String[] args)
     {
 
-        ImageColorAnalyzer imageColorAnalyzer = new ImageColorAnalyzer("testImages/1.jpg");
+        ImageColorAnalyzer imageColorAnalyzer = new ImageColorAnalyzer("testImage/1.jpg");
         imageColorAnalyzer.setQuality(10);
         imageColorAnalyzer.getImageData();
 
 
-        for (int[] color: imageColorAnalyzer.getPalette(16))
+        //for (int[] color: imageColorAnalyzer.getPalette(16, ImageColorAnalyzer.ANALYZER_ALGORITHM.ALG_MEDIAN_CUT))
+        for (int[] color: imageColorAnalyzer.getPalette(12, ImageColorAnalyzer.ANALYZER_ALGORITHM.ALG_K_MEANS))
             System.out.println(Arrays.toString(color));
 
     }
