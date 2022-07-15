@@ -18,7 +18,7 @@ After you created object, you can use this methods:
 
 ```java
 public void getImageData();
-public ArrayList<int[]> getPalette(int colors);
+public ArrayList<int[]> getPalette(int colors, ANALYZER_ALGORITHM algorithm)
 public int getQuality();
 public boolean setQuality(int ALG_QUALITY);
 ```
@@ -30,9 +30,14 @@ public void getImageData()
 > Get image pixels RGB data. You need to call it right before  `public ArrayList<int[]> getPalette(int colors);` only one time
  
 ```java 
-public ArrayList<int[]> getPalette(int colors);
+public ArrayList<int[]> getPalette(int colors, ANALYZER_ALGORITHM algorithm)
 ```
-> Get color palettes from BufferedImage
+> Get color palettes from BufferedImage. Algorithms you can use:
+> `enum ANALYZER_ALGORITHM
+    {
+        ALG_MEDIAN_CUT,
+        ALG_K_MEANS
+    }`
  
 ```java
 public int getQuality();
@@ -71,40 +76,73 @@ public class Main
 <img src="/testImage/1.jpg" alt="Image used for test" width="400"/>
 
 ### Returned result:
+
+#### Median-cut
 ```java
-[9, 17, 23] //Dominant color
-[18, 19, 21]
-[1, 22, 44]
-[12, 27, 39]
-[1, 28, 55]
-[5, 33, 57]
-[4, 36, 64]
-[2, 39, 75]
-[22, 22, 23]
-[26, 24, 25]
-[28, 29, 31]
-[40, 31, 35]
-[56, 29, 36]
-[63, 39, 46]
-[85, 43, 49]
-[170, 108, 74]
+[12, 13, 11]
+[17, 18, 15]
+[21, 19, 17]
+[19, 21, 23]
+[22, 23, 19]
+[34, 22, 22]
+[25, 25, 24]
+[15, 25, 35]
+[31, 28, 26]
+[35, 29, 30]
+[56, 31, 34]
+[5, 32, 59]
+[40, 33, 38]
+[76, 37, 38]
+[68, 42, 50]
+[110, 67, 63]
 ```
 
+#### K-Mean
+```java
+[9, 10, 7]
+[14, 15, 13]
+[20, 19, 18]
+[10, 21, 33]
+[25, 24, 23]
+[34, 28, 29]
+[9, 28, 49]
+[55, 33, 37]
+[3, 35, 67]
+[81, 45, 48]
+[140, 82, 67]
+[206, 164, 135]
+```
 ### Returned results(colored):
 
-- ![#091117](https://via.placeholder.com/15/091117/091117.png) `#091117`
-- ![#121315](https://via.placeholder.com/15/121315/121315.png) `#121315`
-- ![#01162c](https://via.placeholder.com/15/01162c/01162c.png) `#01162c`
-- ![#0c1b27](https://via.placeholder.com/15/0c1b27/0c1b27.png) `#0c1b27`
-- ![#011c37](https://via.placeholder.com/15/011c37/011c37.png) `#011c37`
-- ![#052139](https://via.placeholder.com/15/052139/052139.png) `#052139`
-- ![#042440](https://via.placeholder.com/15/042440/042440.png) `#042440`
-- ![#02274b](https://via.placeholder.com/15/02274b/02274b.png) `#02274b`
-- ![#161617](https://via.placeholder.com/15/161617/161617.png) `#161617`
-- ![#1a1819](https://via.placeholder.com/15/1a1819/1a1819.png) `#1a1819`
-- ![#1c1d1f](https://via.placeholder.com/15/1c1d1f/1c1d1f.png) `#1c1d1f`
-- ![#281f23](https://via.placeholder.com/15/281f23/281f23.png) `#281f23`
-- ![#381d24](https://via.placeholder.com/15/381d24/381d24.png) `#381d24`
-- ![#3f272e](https://via.placeholder.com/15/3f272e/3f272e.png) `#3f272e`
-- ![#552b31](https://via.placeholder.com/15/552b31/552b31.png) `#552b31`
+#### Median-cut
+- ![#0c0d0b](https://via.placeholder.com/15/0c0d0b/0c0d0b.png) `#0c0d0b`
+- ![#11120f](https://via.placeholder.com/15/11120f/11120f.png) `#11120f`
+- ![#151311](https://via.placeholder.com/15/151311/151311.png) `#151311`
+- ![#131517](https://via.placeholder.com/15/131517/131517.png) `#131517`
+- ![#161713](https://via.placeholder.com/15/161713/161713.png) `#161713`
+- ![#221616](https://via.placeholder.com/15/221616/221616.png) `#221616`
+- ![#191918](https://via.placeholder.com/15/191918/191918.png) `#191918`
+- ![#0f1923](https://via.placeholder.com/15/0f1923/0f1923.png) `#0f1923`
+- ![#1f1c1a](https://via.placeholder.com/15/1f1c1a/1f1c1a.png) `#1f1c1a`
+- ![#231d1e](https://via.placeholder.com/15/231d1e/231d1e.png) `#231d1e`
+- ![#381f22](https://via.placeholder.com/15/381f22/381f22.png) `#381f22`
+- ![#05203b](https://via.placeholder.com/15/05203b/05203b.png) `#05203b`
+- ![#282126](https://via.placeholder.com/15/282126/282126.png) `#282126`
+- ![#4c2526](https://via.placeholder.com/15/4c2526/4c2526.png) `#4c2526`
+- ![#442a32](https://via.placeholder.com/15/442a32/442a32.png) `#442a32`
+- ![#6e433f](https://via.placeholder.com/15/6e433f/6e433f.png) `#6e433f`
 - ![#aa6c4a](https://via.placeholder.com/15/aa6c4a/aa6c4a.png) `#aa6c4a`
+
+#### K-Mean
+- ![#090a07](https://via.placeholder.com/15/090a07/090a07.png) `#090a07`
+- ![#0e0f0d](https://via.placeholder.com/15/0e0f0d/0e0f0d.png) `#0e0f0d`
+- ![#141312](https://via.placeholder.com/15/141312/141312.png) `#141312`
+- ![#0a1521](https://via.placeholder.com/15/0a1521/0a1521.png) `#0a1521`
+- ![#191817](https://via.placeholder.com/15/191817/191817.png) `#191817`
+- ![#221c1d](https://via.placeholder.com/15/221c1d/221c1d.png) `#221c1d`
+- ![#091c31](https://via.placeholder.com/15/091c31/091c31.png) `#091c31`
+- ![#372125](https://via.placeholder.com/15/372125/372125.png) `#372125`
+- ![#032343](https://via.placeholder.com/15/032343/032343.png) `#032343`
+- ![#512d30](https://via.placeholder.com/15/512d30/512d30.png) `#512d30`
+- ![#8c5243](https://via.placeholder.com/15/8c5243/8c5243.png) `#8c5243`
+- ![#cea487](https://via.placeholder.com/15/cea487/cea487.png) `#cea487`
