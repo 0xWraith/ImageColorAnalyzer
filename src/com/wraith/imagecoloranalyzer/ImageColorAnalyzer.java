@@ -4,8 +4,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
 import java.util.List;
 
 /**
@@ -13,6 +12,11 @@ import java.util.List;
  */
 public class ImageColorAnalyzer
 {
+    enum ANALYZER_ALGORITHM
+    {
+        ALG_MEDIAN_CUT,
+        ALG_K_MEANS
+    }
     /**
      * Image
      */
@@ -77,6 +81,7 @@ public class ImageColorAnalyzer
                 g = getGreenChannel(bitColor);
                 b = getBlueChannel(bitColor);
 
+
                 IMG_DATA.add(new int[] {r, g, b});
             }
         }
@@ -85,16 +90,20 @@ public class ImageColorAnalyzer
     /**
      * Get color palettes from BufferedImage
      * @param colors Amout of colors to get
+     * @param algorithm Algorithm to use
      * @return ArrayList of palettes
      */
-    public ArrayList<int[]> getPalette(int colors)
+    public ArrayList<int[]> getPalette(int colors, ANALYZER_ALGORITHM algorithm)
     {
         ArrayList<int[]> result = new ArrayList<>();
 
         if(IMG_DATA.isEmpty())
             return result;
 
-        medianCut(IMG_DATA, getTwoPow(colors));
+        if(algorithm == ANALYZER_ALGORITHM.ALG_MEDIAN_CUT)
+            medianCut(IMG_DATA, getTwoPow(colors));
+        else if(algorithm == ANALYZER_ALGORITHM.ALG_K_MEANS)
+            kMeans(IMG_DATA, colors);
 
         for (List<int[]> palette: IMG_PALETTES)
         {
@@ -115,10 +124,143 @@ public class ImageColorAnalyzer
             g /= size;
             b /= size;
 
+
             result.add(new int[] {r, g, b});
         }
 
+        result.sort((o1, o2) -> Integer.compare(o1[0], o2[0]) + Integer.compare(o1[1], o2[1]) + Integer.compare(o1[2], o2[2]));
+
         return result;
+    }
+
+    /**
+     * Call k-mean algorithm
+     * @param palettes Initial colors dataset
+     * @param colors K - Colors amount
+     */
+    private void kMeans(List<int[]> palettes, int colors)
+    {
+        HashMap<Centroid, List<CentroidData>> model = computeKMeans(palettes, colors);
+        IMG_PALETTES.clear();
+
+        for (Map.Entry<Centroid, List<CentroidData>> mapElement : model.entrySet())
+        {
+            ArrayList<int[]> palette = new ArrayList<>();
+
+            for (CentroidData color : mapElement.getValue())
+                palette.add(new int[] { color.getR(), color.getG(), color.getB()});
+
+            IMG_PALETTES.add(palette);
+        }
+    }
+
+    /**
+     * K-mean algorithm
+     * @param imgData Initial data-set
+     * @param colors K
+     * @return HashMap of centroids with data
+     */
+    private HashMap<Centroid, List<CentroidData>> computeKMeans(List<int[]> imgData, int colors)
+    {
+
+        boolean exit = true;
+
+        Random random = new Random();
+        Centroid[] centroids = new Centroid[colors];
+        List<CentroidData> dataList = new ArrayList<>();
+        HashMap<Centroid, List<CentroidData>> model = new HashMap<>();
+
+        for(int i = 0; i < colors; i++)
+        {
+            int randIdx = random.nextInt(imgData.size());
+
+            centroids[i] = new Centroid((i + 1));
+            centroids[i].setX(imgData.get(randIdx)[0]);
+            centroids[i].setY(imgData.get(randIdx)[1]);
+            centroids[i].setZ(imgData.get(randIdx)[2]);
+            model.put(centroids[i], new ArrayList<>());
+        }
+
+        for (int[] color: imgData)
+            dataList.add(new CentroidData(color));
+
+        while(true)
+        {
+            for (CentroidData data: dataList)
+            {
+                int minIdx = 0;
+                double distance;
+                double minDistance = centroids[0].getDistance(data);
+
+                for(int i = 1; i < colors; i++)
+                {
+                    distance = centroids[i].getDistance(data);
+
+                    if(distance < minDistance)
+                    {
+                        minDistance = distance;
+                        minIdx = i;
+                    }
+                }
+
+                if(data.getCentroid() != centroids[minIdx])
+                {
+                    exit = false;
+
+                    if(data.getCentroid() != null)
+                        model.get(data.getCentroid()).remove(data);
+
+
+                    data.setCentroid(centroids[minIdx]);
+                    model.get(centroids[minIdx]).add(data);
+                }
+            }
+
+            if(exit)
+                break;
+
+            Centroid mapCentroid;
+            int sumX, sumY, sumZ, size;
+
+            for (Map.Entry<Centroid, List<CentroidData>> mapElement : model.entrySet())
+            {
+                size = mapElement.getValue().size();
+
+                if(size == 0)
+                    continue;
+
+//                System.out.println("Foreach Centroid #" + mapElement.getKey().number + " " + mapElement.getValue().size());
+                sumX = sumY = sumZ = 0;
+
+                for(CentroidData color : mapElement.getValue())
+                {
+                    sumX += color.getR();
+                    sumY += color.getG();
+                    sumZ += color.getB();
+                }
+
+                mapCentroid = mapElement.getKey();
+
+                sumX /= size;
+                sumY /= size;
+                sumZ /= size;
+
+//                System.out.println("Centroid #" + mapCentroid.number + "\nPrev pos: " + mapCentroid.getX() + ", " + mapCentroid.getY() + ", " + mapCentroid.getZ() + "\nNew pos: " + sumX + ", " + sumY + ", " + sumZ + "\n");
+
+                mapCentroid.setX(sumX);
+                mapCentroid.setY(sumY);
+                mapCentroid.setZ(sumZ);
+            }
+
+            exit = true;
+        }
+
+        for(int i = 0; i < colors; i++)
+            System.out.println(model.get(centroids[i]).size());
+
+        System.out.println("Exit");
+
+        return model;
     }
 
     /**
