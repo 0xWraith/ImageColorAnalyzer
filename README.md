@@ -1,16 +1,21 @@
 # ImageColorAnalyzer
+
 Java library to grab color palettes from image.
 
 ## How to use
 
 First of all you need to create an ImageColorAnalyzer object:
+
 ```java
 ImageColorAnalyzer imageColorAnalyzer = new ImageColorAnalyzer("path/to/image.png");
 ```
 
 Available constructors:
+
 ```java
+public ImageColorAnalyzer();
 public ImageColorAnalyzer(String path);
+public ImageColorAnalyzer(int ALG_QUALITY);
 public ImageColorAnalyzer(String path, int ALG_QUALITY);
 ```
 
@@ -21,13 +26,17 @@ public void getImageData();
 public ArrayList<int[]> getPalette(int colors, ANALYZER_ALGORITHM algorithm)
 public int getQuality();
 public boolean setQuality(int ALG_QUALITY);
+public void changeImage(String path);
+public int[] getAverageColor();
+public int[] getDominantColor();
 ```
 
 ## Method description
+
 ```java
 public void getImageData()
 ```
-> Get image pixels RGB data. You need to call it right before  `public ArrayList<int[]> getPalette(int colors);` only one time
+> Get image pixels RGB data. You need to call it right before  `public ArrayList<int[]> getPalette(int colors);` only one time.
  
 ```java 
 public ArrayList<int[]> getPalette(int colors, ANALYZER_ALGORITHM algorithm)
@@ -42,14 +51,28 @@ public ArrayList<int[]> getPalette(int colors, ANALYZER_ALGORITHM algorithm)
 ```java
 public int getQuality();
 ```
->  Getter for ALG_QUALITY
+>  Getter for ALG_QUALITY.
  
 ```java
 public boolean setQuality(int ALG_QUALITY);
 ```
 > Setter for ALG_QUALITY. Range is from `1` to `10`. The less numbers - the better results you will get.
  
-## Test
+```java
+public void changeImage(String path);
+```
+> Used to change image.
+ 
+```java
+public int[] getAverageColor();
+```
+> Get image average color. First of all you need to call `public void getImageData();`
+
+```java
+public int[] getDominantColor();
+```
+> Get image dominant color. First of all you need to call `public ArrayList<int[]> getPalette(int colors, ANALYZER_ALGORITHM algorithm);`
+## Tests
  
 ### Code used
 Code used for test:
